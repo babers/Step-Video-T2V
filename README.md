@@ -45,10 +45,11 @@
 2. [Model Summary](#2-model-summary)
 3. [Model Download](#3-model-download)
 4. [Model Usage](#4-model-usage)
-5. [Benchmark](#5-benchmark)
-6. [Online Engine](#6-online-engine)
-7. [Citation](#7-citation)
-8. [Acknowledgement](#8-ackownledgement)
+5. [Integration Guide](#5-integration-guide) 🆕
+6. [Benchmark](#6-benchmark)
+7. [Online Engine](#7-online-engine)
+8. [Citation](#8-citation)
+9. [Acknowledgement](#9-ackownledgement)
 
 ## 1. Introduction
 We present **Step-Video-T2V**, a state-of-the-art (SoTA) text-to-video pre-trained model with 30 billion parameters and the capability to generate videos up to 204 frames. To enhance both training and inference efficiency, we propose a deep compression VAE for videos, achieving 16x16 spatial and 8x temporal compression ratios. Direct Preference Optimization (DPO) is applied in the final stage to further enhance the visual quality of the generated videos. Step-Video-T2V's performance is evaluated on a novel video generation benchmark, **Step-Video-T2V-Eval**, demonstrating its SoTA text-to-video quality compared to both open-source and commercial engines.
@@ -155,13 +156,62 @@ Step-Video-T2V exhibits robust performance in inference settings, consistently g
 
 For more performance results, please refer to the [benchmark metrics](https://github.com/xdit-project/xDiT/blob/main/docs/performance/stepvideo.md) from the xDiT team:
 
-## 5. Benchmark
+## 5. Integration Guide
+
+### 📦 Integrating Step-Video-T2V into Your Application
+
+Want to integrate Step-Video-T2V into your custom video generation application? We provide comprehensive integration examples and documentation:
+
+**🚀 Quick Start Integration**
+
+```python
+from stepvideo.diffusion.video_pipeline import StepVideoPipeline
+import torch
+
+# Load and initialize the pipeline
+pipeline = StepVideoPipeline.from_pretrained("path/to/model")
+pipeline = pipeline.to(dtype=torch.bfloat16)
+pipeline.transformer = pipeline.transformer.to("cuda")
+pipeline.setup_api(vae_url="127.0.0.1", caption_url="127.0.0.1")
+
+# Generate a video
+video = pipeline(
+    prompt="A beautiful sunset over the ocean",
+    num_frames=204,
+    height=544,
+    width=992,
+)
+```
+
+**📚 Integration Resources**
+
+- **[INTEGRATION.md](INTEGRATION.md)** - Comprehensive integration guide covering:
+  - Direct pipeline integration
+  - Remote API integration
+  - Multi-GPU distributed inference
+  - Production deployment strategies
+  - API reference and best practices
+
+- **[examples/](examples/)** - Ready-to-use integration examples:
+  - `simple_integration.py` - Basic pipeline usage
+  - `api_client_integration.py` - Remote API client
+  - `custom_app_integration.py` - Full application wrapper with batch processing
+
+**🔧 Integration Approaches**
+
+1. **Direct Integration** - Use the Python API directly in your application
+2. **API-Based Integration** - Deploy as a service and call via HTTP API
+3. **Distributed Multi-GPU** - Scale across multiple GPUs for production
+
+See the [Integration Guide](INTEGRATION.md) for detailed instructions and examples.
+
+## 6. Benchmark
 We are releasing [Step-Video-T2V Eval](https://github.com/stepfun-ai/Step-Video-T2V/blob/main/benchmark/Step-Video-T2V-Eval) as a new benchmark, featuring 128 Chinese prompts sourced from real users. This benchmark is designed to evaluate the quality of generated videos across 11 distinct categories: Sports, Food, Scenery, Animals, Festivals, Combination Concepts, Surreal, People, 3D Animation, Cinematography, and Style.
 
-## 6. Online Engine
+## 7. Online Engine
 The online version of Step-Video-T2V is available on [跃问视频](https://yuewen.cn/videos), where you can also explore some impressive examples.
 
-## 7. Citation
+## 8. Citation
 ```
 @misc{ma2025stepvideot2vtechnicalreportpractice,
       title={Step-Video-T2V Technical Report: The Practice, Challenges, and Future of Video Foundation Model}, 
@@ -174,7 +224,7 @@ The online version of Step-Video-T2V is available on [跃问视频](https://yuew
 }
 ```
 
-## 8. Acknowledgement
+## 9. Acknowledgement
 - We would like to express our sincere thanks to the [xDiT](https://github.com/xdit-project/xDiT) team for their invaluable support and parallelization strategy. 
 - Our code will be integrated into the official repository of [Huggingface/Diffusers](https://github.com/huggingface/diffusers).
 - We thank the [FastVideo](https://github.com/hao-ai-lab/FastVideo) team for their continued collaboration and look forward to launching inference acceleration solutions together in the near future.
